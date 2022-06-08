@@ -1,5 +1,5 @@
 {
-  "name": "onlinecheckers",
+  "name": "checkers",
   "version": "1.0.0",
   "description": "Websockets are used to build a browser-based Battleship clone that works on any device. The game uses WebSockets and implements a stateful, server-authoritative model where the game state is stored on a server. The design of the app aims to be simple, stateful, and not scalable.",
   "main": "server.js",
