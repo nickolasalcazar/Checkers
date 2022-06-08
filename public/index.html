@@ -1,115 +1,153 @@
-  
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="style.css"/>
-    <script defer src="script.js"></script>
-    <title>Checkers</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <title>Online Checkers</title>
 </head>
 <body>
-    <main>
-        <div class="red-turn-text mobile">
-            Reds turn
-        </div>
-        <table>
-            <tr>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="0"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="1"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="2"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="3"></p></td>
-            </tr>
-            <tr>
-                <td><p class="red-piece" id="4"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="5"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="6"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="7"></p></td>
-                <td class="noPieceHere"></td>
-            </tr>
-            <tr>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="8"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="9"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="10"></p></td>
-                <td class="noPieceHere"></td>
-                <td><p class="red-piece" id="11"></p></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-            </tr>
-            <tr>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-                <td class="noPieceHere"></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><span class="black-piece" id="12"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="13"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="14"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="15"></span></td>
-                <td class="noPieceHere"></td>
-            </tr>
-            <tr>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="16"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="17"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="18"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="19"></span></td>
-            </tr>
-            <tr>
-                <td><span class="black-piece" id="20"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="21"></span></td>
-                <td class="noPieceHere">
-                <td><span class="black-piece" id="22"></span></td>
-                <td class="noPieceHere"></td>
-                <td><span class="black-piece" id="23"></span></td>
-                <td class="noPieceHere"></td>
-            </tr>
-        </table>
-        <div class="desktop">
-            <div class="red-turn-text">
-                Reds turn
-            </div>
-            <p id="divider">|</p>
-            <div class="black-turn-text">
-                Blacks turn
-            </div>
-        </div>
-        <div class="black-turn-text mobile">
-            Blacks turn
-        </div>
-    </main>
+  <h1>Online Checkers</h1>
+  <div id="game-options-container">
+    <div id="main-menu-container">
+      <button id="create-game-btn">Create Online Game</button>
+      <button id="join-game-btn">Join Online Game</button>
+      <div class="menu-decoration user-cannot-highlight">
+        <div class="flip">❧</div>
+        <div class="no-flip">❧</div>
+      </div>
+      <button id="local-game-btn">Play Local Game</button>
+    </div>
+    <div id="waiting-for-opponent-container">
+      <div id="join-code-content">
+        <p>Game Code</p>
+        <h3 id="join-code">Loading...</h3>
+        <span id="copied-to-clipboard">Copied!</span>
+        <p id="join-code-waiting-message" class="blink">Waiting for opponent</p>
+      </div>
+      <button id="cancel-create-btn">Never mind!</button>
+    </div>
+    <div id="join-game-container">
+      <label for="game-id">Enter Game Code</label>
+      <input id="game-id" type="text">
+      <button id="submit-join-game-btn">Join Game</button>
+      <button id="cancel-join-btn">Cancel</button>
+    </div>
+    <div id="loading-screen">
+      <p id="loading-img">⏳</p>
+      <p class="blink">Connecting...</p>
+    </div>
+    <div id="connection-success">
+      <p id="success-img">✅</p>
+      <p>Connected!</p>
+    </div>
+  </div>
+  <main>
+    <div id="board-container">
+      <button id="quit-game-btn">Quit Game</button>
+      <table>
+        <tr>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+        </tr>
+        <tr>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+        </tr>
+        <tr>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+        </tr>
+        <tr>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+          <td></td>
+          <td class="noPieceHere"></td>
+        </tr>
+      </table>
+      <div id="whos-turn-box">
+        <span class="red-turn-text">Red's turn</span>
+        <span id="divider">|</span>
+        <span class="black-turn-text">Black's turn</span>
+      </div>
+    </div>
+    <div id="waiting-for-opponent-box">
+      <div id="waiting-display" class="blink">Waiting for opponent</div>
+    </div>
+  </main>
+  <footer>
+    <ul class="footer-content">
+      <a href="https://github.com/nickolasalcazar/OnlineCheckers">
+        <li id="github-link">Source Code</li>
+      </a>
+    </ul>
+  </footer>
+  <script src="index.js"></script>
 </body>
 </html>
