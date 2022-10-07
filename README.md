@@ -14,4 +14,4 @@ Run the app with `npm start`.
 
 ## Credit
 
-This project is a fork of [Ryan Branco](https://github.com/RyanBranco)'s repo "[Checkers](https://github.com/RyanBranco/Checkers)". Branco's repo is credited for the underlying logic of the checkers app. I programmed the game's online functionality and added additional styling.
+This project is a fork of [Ryan Branco](https://github.com/RyanBranco)'s repo "[Checkers](https://github.com/RyanBranco/Checkers)". Branco's repo is credited for the underlying logic of the Checkers app. I programmed the game's online functionality and additional styling.
