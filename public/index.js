@@ -4,25 +4,26 @@ let gameId = null;
 let joinCode = null;
 let isLocal = false;
 //let ws = new WebSocket("ws://localhost:3001");  // Connect to websocket hosted at localhost:9090
-let ws = new WebSocket("wss://cryptic-lake-10293.herokuapp.com");
+// let ws = new WebSocket("wss://cryptic-lake-10293.herokuapp.com");
+let ws = new WebSocket("wss://play-checkers-online.herokuapp.com");
 
 // Client sends request to server to update board
 const submitMove = () => {
   const payload = {
-    "method": "update",
-    "clientId": clientId,
-    "gameId": gameId,
-    "board": board,
-    "kings": kings
-  }
+    method: "update",
+    clientId: clientId,
+    gameId: gameId,
+    board: board,
+    kings: kings,
+  };
   ws.send(JSON.stringify(payload));
   waiting = true;
   turn = !turn;
   toggleWaitingDisplay();
-}
+};
 
 // Handling server responses
-ws.onmessage = message => {
+ws.onmessage = (message) => {
   const response = JSON.parse(message.data);
   switch (response.method) {
     // Server responds to client first connection to server; client saves clientId
@@ -61,11 +62,15 @@ ws.onmessage = message => {
       } else if (response.joinStatus === "fail") {
         // Display error message
         if (document.getElementsByClassName("join-error").length !== 0) return;
-        const joinError = joinGameContainer.appendChild(document.createElement("p"));
+        const joinError = joinGameContainer.appendChild(
+          document.createElement("p")
+        );
         joinError.textContent = "Incorrect game code or game does not exist";
         joinError.classList.add("join-error");
         joinError.classList.add("fade");
-        setTimeout(() => { joinError.parentNode.removeChild(joinError); }, 3000);
+        setTimeout(() => {
+          joinError.parentNode.removeChild(joinError);
+        }, 3000);
         // Refocus browser onto text input field
         document.getElementById("game-id").focus();
       }
@@ -80,20 +85,22 @@ ws.onmessage = message => {
       break;
     default:
   }
-}
+};
 
 /* UI Logic ***************************************************************************/
 const gameOptionsContainer = document.getElementById("game-options-container");
 
 const mainMenuContainer = document.getElementById("main-menu-container");
-const waitingOnOpponentContainer = document.getElementById("waiting-for-opponent-container");
+const waitingOnOpponentContainer = document.getElementById(
+  "waiting-for-opponent-container"
+);
 const joinGameContainer = document.getElementById("join-game-container");
 
 const loadingScreen = document.getElementById("loading-screen");
 const connectionSuccessScreen = document.getElementById("connection-success");
 const waitingDisplay = document.getElementById("waiting-display");
 
-const quitGameBtn = document.getElementById("quit-game-btn")
+const quitGameBtn = document.getElementById("quit-game-btn");
 
 // Plays a sequence of animations for when an opponent connects to the game
 const connectionAnimation = () => {
@@ -103,16 +110,18 @@ const connectionAnimation = () => {
     setTimeout(() => {
       loadingScreen.style.display = "none";
       connectionSuccessScreen.style.animation = "grow 0.2s forwards";
-      connectionSuccessScreen.childNodes[1].style.animation = "spin 0.2s forwards, shake 1s";
+      connectionSuccessScreen.childNodes[1].style.animation =
+        "spin 0.2s forwards, shake 1s";
       setTimeout(() => {
         gameOptionsContainer.style.animation = "shrink-width 0.5s forwards";
-        connectionSuccessScreen.childNodes[1].style.animation = "shrink-width 0.1s forwards";
+        connectionSuccessScreen.childNodes[1].style.animation =
+          "shrink-width 0.1s forwards";
         quitGameBtn.style.display = "block";
-        setTimeout(() => gameOptionsContainer.style.display = "none", 100);
+        setTimeout(() => (gameOptionsContainer.style.display = "none"), 100);
       }, 1100);
     }, 200);
   }, 1000);
-}
+};
 
 // Client clicks the 'Play Local Game' butotn
 // Choose to play a local game rather than an online game
@@ -124,11 +133,11 @@ document.getElementById("local-game-btn").addEventListener("click", () => {
 
 // Client clicks the 'Create Online Game' button
 // Sends request to server.js to create a new online game
-document.getElementById("create-game-btn").addEventListener("click", e => {
+document.getElementById("create-game-btn").addEventListener("click", (e) => {
   waitingOnOpponentContainer.style.display = "block";
   mainMenuContainer.style.display = "none";
   document.getElementById("join-code-waiting-message").classList.add("blink");
-  ws.send(JSON.stringify({ "method": "create", "clientId": clientId }));
+  ws.send(JSON.stringify({ method: "create", clientId: clientId }));
 });
 
 // Client clicks the 'Cancel' button
@@ -141,14 +150,16 @@ cancelCreateOnlineGameBtn.addEventListener("click", () => {
 
 // Client clicks the 'Join Online Game' button
 // Sends request to server to join an existing game
-document.getElementById("submit-join-game-btn").addEventListener("click", () => {
-  const payload = {
-    "method": "join",
-    "clientId": clientId,
-    "joinCode": document.getElementById("game-id").value
-  }
-  ws.send(JSON.stringify(payload));  // Send request to join game
-});
+document
+  .getElementById("submit-join-game-btn")
+  .addEventListener("click", () => {
+    const payload = {
+      method: "join",
+      clientId: clientId,
+      joinCode: document.getElementById("game-id").value,
+    };
+    ws.send(JSON.stringify(payload)); // Send request to join game
+  });
 
 // Client clicks the 'Cancel' button
 // Cancels joining an online game
@@ -167,8 +178,10 @@ document.getElementById("join-game-btn").addEventListener("click", () => {
 
 // Copy join code to clipboard when it is clicked
 // Displays 'text copied' when it is clicked
-const joinCodeText = document.querySelector("#waiting-for-opponent-container h3");
-joinCodeText.addEventListener("click", e => {
+const joinCodeText = document.querySelector(
+  "#waiting-for-opponent-container h3"
+);
+joinCodeText.addEventListener("click", (e) => {
   navigator.clipboard.writeText(e.target.textContent);
   const copiedMessage = document.getElementById("copied-to-clipboard");
   copiedMessage.style.display = "block";
@@ -178,11 +191,10 @@ joinCodeText.addEventListener("click", e => {
 // Toggle waiting display on / off
 // Active when player is waiting for opponent to submit their move
 const toggleWaitingDisplay = () => {
-  if (waiting === true)
-    waitingDisplay.style.display = "block";
+  if (waiting === true) waitingDisplay.style.display = "block";
   else if (waiting === false || waiting === null)
     waitingDisplay.style.display = "none";
-}
+};
 
 // Player clicks on "Quit Game" button
 // Quits game and returns to main menu
@@ -195,15 +207,71 @@ quitGameBtn.addEventListener("click", () => {
 
 /* Gameplay Logic **********************************************************************/
 const initialBoard = [
-  null, 0, null, 1, null, 2, null, 3,
-  4, null, 5, null, 6, null, 7, null,
-  null, 8, null, 9, null, 10, null, 11,
-  null, null, null, null, null, null, null, null,
-  null, null, null, null, null, null, null, null,
-  12, null, 13, null, 14, null, 15, null,
-  null, 16, null, 17, null, 18, null, 19,
-  20, null, 21, null, 22, null, 23, null
-]
+  null,
+  0,
+  null,
+  1,
+  null,
+  2,
+  null,
+  3,
+  4,
+  null,
+  5,
+  null,
+  6,
+  null,
+  7,
+  null,
+  null,
+  8,
+  null,
+  9,
+  null,
+  10,
+  null,
+  11,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  12,
+  null,
+  13,
+  null,
+  14,
+  null,
+  15,
+  null,
+  null,
+  16,
+  null,
+  17,
+  null,
+  18,
+  null,
+  19,
+  20,
+  null,
+  21,
+  null,
+  22,
+  null,
+  23,
+  null,
+];
 
 // DOM references
 const cells = document.querySelectorAll("td");
@@ -220,10 +288,10 @@ let blackScore = 12;
 let playerPieces;
 
 let board = [null] * 64;
-let playerColor = null;             // If null, then game is local
-let waiting = null;                 // If null, game is local
+let playerColor = null; // If null, then game is local
+let waiting = null; // If null, game is local
 
-let kings = {red: [], black: []};   // Array of IDs of pieces that are kings
+let kings = { red: [], black: [] }; // Array of IDs of pieces that are kings
 
 // Selected piece properties
 let selectedPiece = {
@@ -237,8 +305,8 @@ let selectedPiece = {
   minusSeventhSpace: false,
   minusNinthSpace: false,
   minusFourteenthSpace: false,
-  minusEighteenthSpace: false
-}
+  minusEighteenthSpace: false,
+};
 
 // Parses pieceId and returns the index of that piece's place on the board
 const findPiece = (pieceId) => board.indexOf(parseInt(pieceId));
@@ -256,7 +324,7 @@ const givePiecesEventListeners = () => {
       blacksPieces[i].style.cursor = "pointer";
     }
   }
-}
+};
 
 // Starts a local game
 const startLocalGame = () => {
@@ -264,7 +332,7 @@ const startLocalGame = () => {
   waiting = false;
   board = JSON.parse(JSON.stringify(initialBoard)); // Copy by value
   populateBoard();
-}
+};
 
 // Populates board from data contained in 'board' variable
 const populateBoard = () => {
@@ -286,12 +354,12 @@ const populateBoard = () => {
     }
   }
   // If player is not waiting, then add listeners
-  if (waiting === false)  {
+  if (waiting === false) {
     redsPieces = document.querySelectorAll(".red-piece");
     blacksPieces = document.querySelectorAll(".black-piece");
     givePiecesEventListeners();
   }
-}
+};
 
 // Holds the length of the players piece count
 const getPlayerPieces = () => {
@@ -299,7 +367,7 @@ const getPlayerPieces = () => {
   else playerPieces = blacksPieces;
   removeCellonclick();
   resetBorders();
-}
+};
 
 // Removes possible moves from old selected piece
 // This is needed because the user might re-select a piece
@@ -308,7 +376,7 @@ const removeCellonclick = () => {
     cells[i].removeAttribute("onclick");
     cells[i].style.cursor = "default";
   }
-}
+};
 
 // Resets borders to default
 const resetBorders = () => {
@@ -316,7 +384,7 @@ const resetBorders = () => {
     playerPieces[i].style.border = "1px solid white";
   resetSelectedPieceProperties();
   getSelectedPiece();
-}
+};
 
 // Resets selected piece properties
 const resetSelectedPieceProperties = () => {
@@ -331,95 +399,147 @@ const resetSelectedPieceProperties = () => {
   selectedPiece.minusNinthSpace = false;
   selectedPiece.minusFourteenthSpace = false;
   selectedPiece.minusEighteenthSpace = false;
-}
+};
 
 // Gets ID and index of the board cell its on
 const getSelectedPiece = () => {
   selectedPiece.pieceId = parseInt(event.target.id);
   selectedPiece.indexOfBoardPiece = findPiece(selectedPiece.pieceId);
   isPieceKing();
-}
+};
 
 // Checks if selected piece is a king
 const isPieceKing = () => {
-  selectedPiece.isKing = document.getElementById(selectedPiece.pieceId).classList.contains("king");
+  selectedPiece.isKing = document
+    .getElementById(selectedPiece.pieceId)
+    .classList.contains("king");
   getAvailableSpaces();
-}
+};
 
 // Gets the moves that the selected piece can make
 const getAvailableSpaces = () => {
-  if (board[selectedPiece.indexOfBoardPiece + 7] === null && 
-    cells[selectedPiece.indexOfBoardPiece + 7].classList.contains("noPieceHere") !== true) {
+  if (
+    board[selectedPiece.indexOfBoardPiece + 7] === null &&
+    cells[selectedPiece.indexOfBoardPiece + 7].classList.contains(
+      "noPieceHere"
+    ) !== true
+  ) {
     selectedPiece.seventhSpace = true;
     cells[selectedPiece.indexOfBoardPiece + 7].style.cursor = "pointer";
   }
-  if (board[selectedPiece.indexOfBoardPiece + 9] === null && 
-    cells[selectedPiece.indexOfBoardPiece + 9].classList.contains("noPieceHere") !== true) {
+  if (
+    board[selectedPiece.indexOfBoardPiece + 9] === null &&
+    cells[selectedPiece.indexOfBoardPiece + 9].classList.contains(
+      "noPieceHere"
+    ) !== true
+  ) {
     selectedPiece.ninthSpace = true;
     cells[selectedPiece.indexOfBoardPiece + 9].style.cursor = "pointer";
   }
-  if (board[selectedPiece.indexOfBoardPiece - 7] === null && 
-    cells[selectedPiece.indexOfBoardPiece - 7].classList.contains("noPieceHere") !== true) {
+  if (
+    board[selectedPiece.indexOfBoardPiece - 7] === null &&
+    cells[selectedPiece.indexOfBoardPiece - 7].classList.contains(
+      "noPieceHere"
+    ) !== true
+  ) {
     selectedPiece.minusSeventhSpace = true;
     cells[selectedPiece.indexOfBoardPiece - 7].style.cursor = "pointer";
   }
-  if (board[selectedPiece.indexOfBoardPiece - 9] === null && 
-    cells[selectedPiece.indexOfBoardPiece - 9].classList.contains("noPieceHere") !== true) {
+  if (
+    board[selectedPiece.indexOfBoardPiece - 9] === null &&
+    cells[selectedPiece.indexOfBoardPiece - 9].classList.contains(
+      "noPieceHere"
+    ) !== true
+  ) {
     selectedPiece.minusNinthSpace = true;
     cells[selectedPiece.indexOfBoardPiece - 9].style.cursor = "pointer";
   }
   checkAvailableJumpSpaces();
-}
+};
 
 // Gets the moves that the selected piece can jump
 const checkAvailableJumpSpaces = () => {
   if (turn) {
-    if (board[selectedPiece.indexOfBoardPiece + 14] === null 
-    && cells[selectedPiece.indexOfBoardPiece + 14].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece + 7] >= 12) {
+    if (
+      board[selectedPiece.indexOfBoardPiece + 14] === null &&
+      cells[selectedPiece.indexOfBoardPiece + 14].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece + 7] >= 12
+    ) {
       selectedPiece.fourteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece + 18] === null 
-    && cells[selectedPiece.indexOfBoardPiece + 18].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece + 9] >= 12) {
+    if (
+      board[selectedPiece.indexOfBoardPiece + 18] === null &&
+      cells[selectedPiece.indexOfBoardPiece + 18].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece + 9] >= 12
+    ) {
       selectedPiece.eighteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece - 14] === null 
-    && cells[selectedPiece.indexOfBoardPiece - 14].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece - 7] >= 12) {
+    if (
+      board[selectedPiece.indexOfBoardPiece - 14] === null &&
+      cells[selectedPiece.indexOfBoardPiece - 14].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece - 7] >= 12
+    ) {
       selectedPiece.minusFourteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece - 18] === null 
-    && cells[selectedPiece.indexOfBoardPiece - 18].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece - 9] >= 12) {
+    if (
+      board[selectedPiece.indexOfBoardPiece - 18] === null &&
+      cells[selectedPiece.indexOfBoardPiece - 18].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece - 9] >= 12
+    ) {
       selectedPiece.minusEighteenthSpace = true;
     }
   } else {
-    if (board[selectedPiece.indexOfBoardPiece + 14] === null 
-    && cells[selectedPiece.indexOfBoardPiece + 14].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece + 7] < 12 && board[selectedPiece.indexOfBoardPiece + 7] !== null) {
+    if (
+      board[selectedPiece.indexOfBoardPiece + 14] === null &&
+      cells[selectedPiece.indexOfBoardPiece + 14].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece + 7] < 12 &&
+      board[selectedPiece.indexOfBoardPiece + 7] !== null
+    ) {
       selectedPiece.fourteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece + 18] === null 
-    && cells[selectedPiece.indexOfBoardPiece + 18].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece + 9] < 12 && board[selectedPiece.indexOfBoardPiece + 9] !== null) {
+    if (
+      board[selectedPiece.indexOfBoardPiece + 18] === null &&
+      cells[selectedPiece.indexOfBoardPiece + 18].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece + 9] < 12 &&
+      board[selectedPiece.indexOfBoardPiece + 9] !== null
+    ) {
       selectedPiece.eighteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece - 14] === null
-    && cells[selectedPiece.indexOfBoardPiece - 14].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece - 7] < 12 
-    && board[selectedPiece.indexOfBoardPiece - 7] !== null) {
+    if (
+      board[selectedPiece.indexOfBoardPiece - 14] === null &&
+      cells[selectedPiece.indexOfBoardPiece - 14].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece - 7] < 12 &&
+      board[selectedPiece.indexOfBoardPiece - 7] !== null
+    ) {
       selectedPiece.minusFourteenthSpace = true;
     }
-    if (board[selectedPiece.indexOfBoardPiece - 18] === null
-    && cells[selectedPiece.indexOfBoardPiece - 18].classList.contains("noPieceHere") !== true
-    && board[selectedPiece.indexOfBoardPiece - 9] < 12
-    && board[selectedPiece.indexOfBoardPiece - 9] !== null) {
+    if (
+      board[selectedPiece.indexOfBoardPiece - 18] === null &&
+      cells[selectedPiece.indexOfBoardPiece - 18].classList.contains(
+        "noPieceHere"
+      ) !== true &&
+      board[selectedPiece.indexOfBoardPiece - 9] < 12 &&
+      board[selectedPiece.indexOfBoardPiece - 9] !== null
+    ) {
       selectedPiece.minusEighteenthSpace = true;
     }
   }
   checkPieceConditions();
-}
+};
 
 // Restricts movement if the piece is a king
 const checkPieceConditions = () => {
@@ -439,37 +559,69 @@ const checkPieceConditions = () => {
     }
     givePieceBorder();
   }
-}
+};
 
 // Gives the piece a green highlight for the user (showing its movable)
 const givePieceBorder = () => {
-  if (selectedPiece.seventhSpace || selectedPiece.ninthSpace || selectedPiece.fourteenthSpace
-  || selectedPiece.eighteenthSpace || selectedPiece.minusSeventhSpace || selectedPiece.minusNinthSpace
-  || selectedPiece.minusFourteenthSpace || selectedPiece.minusEighteenthSpace) {
-    document.getElementById(selectedPiece.pieceId).style.border = "3px solid green";
+  if (
+    selectedPiece.seventhSpace ||
+    selectedPiece.ninthSpace ||
+    selectedPiece.fourteenthSpace ||
+    selectedPiece.eighteenthSpace ||
+    selectedPiece.minusSeventhSpace ||
+    selectedPiece.minusNinthSpace ||
+    selectedPiece.minusFourteenthSpace ||
+    selectedPiece.minusEighteenthSpace
+  ) {
+    document.getElementById(selectedPiece.pieceId).style.border =
+      "3px solid green";
     giveCellsClick();
   } else return;
-}
+};
 
 // Gives the cells on the board a 'click' based on the possible moves
 const giveCellsClick = () => {
   if (selectedPiece.seventhSpace)
-    cells[selectedPiece.indexOfBoardPiece + 7].setAttribute("onclick", "makeMove(7)");
+    cells[selectedPiece.indexOfBoardPiece + 7].setAttribute(
+      "onclick",
+      "makeMove(7)"
+    );
   if (selectedPiece.ninthSpace)
-    cells[selectedPiece.indexOfBoardPiece + 9].setAttribute("onclick", "makeMove(9)");
+    cells[selectedPiece.indexOfBoardPiece + 9].setAttribute(
+      "onclick",
+      "makeMove(9)"
+    );
   if (selectedPiece.fourteenthSpace)
-    cells[selectedPiece.indexOfBoardPiece + 14].setAttribute("onclick", "makeMove(14)");
+    cells[selectedPiece.indexOfBoardPiece + 14].setAttribute(
+      "onclick",
+      "makeMove(14)"
+    );
   if (selectedPiece.eighteenthSpace)
-    cells[selectedPiece.indexOfBoardPiece + 18].setAttribute("onclick", "makeMove(18)");
+    cells[selectedPiece.indexOfBoardPiece + 18].setAttribute(
+      "onclick",
+      "makeMove(18)"
+    );
   if (selectedPiece.minusSeventhSpace)
-    cells[selectedPiece.indexOfBoardPiece - 7].setAttribute("onclick", "makeMove(-7)");
+    cells[selectedPiece.indexOfBoardPiece - 7].setAttribute(
+      "onclick",
+      "makeMove(-7)"
+    );
   if (selectedPiece.minusNinthSpace)
-   cells[selectedPiece.indexOfBoardPiece - 9].setAttribute("onclick", "makeMove(-9)");
+    cells[selectedPiece.indexOfBoardPiece - 9].setAttribute(
+      "onclick",
+      "makeMove(-9)"
+    );
   if (selectedPiece.minusFourteenthSpace)
-    cells[selectedPiece.indexOfBoardPiece - 14].setAttribute("onclick", "makeMove(-14)");
+    cells[selectedPiece.indexOfBoardPiece - 14].setAttribute(
+      "onclick",
+      "makeMove(-14)"
+    );
   if (selectedPiece.minusEighteenthSpace)
-    cells[selectedPiece.indexOfBoardPiece - 18].setAttribute("onclick", "makeMove(-18)");
-}
+    cells[selectedPiece.indexOfBoardPiece - 18].setAttribute(
+      "onclick",
+      "makeMove(-18)"
+    );
+};
 
 // Makes the move that was clicked
 const makeMove = (number) => {
@@ -477,34 +629,42 @@ const makeMove = (number) => {
   cells[selectedPiece.indexOfBoardPiece].innerHTML = "";
   if (turn) {
     if (selectedPiece.isKing) {
-      cells[selectedPiece.indexOfBoardPiece + number].innerHTML = `<p class="red-piece king" id="${selectedPiece.pieceId}"></p>`;
+      cells[
+        selectedPiece.indexOfBoardPiece + number
+      ].innerHTML = `<p class="red-piece king" id="${selectedPiece.pieceId}"></p>`;
       redsPieces = document.querySelectorAll(".red-piece");
     } else {
-      cells[selectedPiece.indexOfBoardPiece + number].innerHTML = `<p class="red-piece" id="${selectedPiece.pieceId}"></p>`;
+      cells[
+        selectedPiece.indexOfBoardPiece + number
+      ].innerHTML = `<p class="red-piece" id="${selectedPiece.pieceId}"></p>`;
       redsPieces = document.querySelectorAll(".red-piece");
     }
   } else {
     if (selectedPiece.isKing) {
-      cells[selectedPiece.indexOfBoardPiece + number].innerHTML = `<p class="black-piece king" id="${selectedPiece.pieceId}"></p>`;
+      cells[
+        selectedPiece.indexOfBoardPiece + number
+      ].innerHTML = `<p class="black-piece king" id="${selectedPiece.pieceId}"></p>`;
       blacksPieces = document.querySelectorAll(".black-piece");
     } else {
-      cells[selectedPiece.indexOfBoardPiece + number].innerHTML = `<p class="black-piece" id="${selectedPiece.pieceId}"></p>`;
+      cells[
+        selectedPiece.indexOfBoardPiece + number
+      ].innerHTML = `<p class="black-piece" id="${selectedPiece.pieceId}"></p>`;
       blacksPieces = document.querySelectorAll(".black-piece");
     }
   }
 
-  let indexOfPiece = selectedPiece.indexOfBoardPiece
+  let indexOfPiece = selectedPiece.indexOfBoardPiece;
   if (number === 14 || number === -14 || number === 18 || number === -18)
     changeData(indexOfPiece, indexOfPiece + number, indexOfPiece + number / 2);
   else changeData(indexOfPiece, indexOfPiece + number);
-}
+};
 
 // Changes the board states data on the back end
 const changeData = (indexOfBoardPiece, modifiedIndex, removePiece) => {
   board[indexOfBoardPiece] = null;
   board[modifiedIndex] = parseInt(selectedPiece.pieceId);
   if (turn && selectedPiece.pieceId < 12 && modifiedIndex >= 56) {
-    document.getElementById(selectedPiece.pieceId).classList.add("king")
+    document.getElementById(selectedPiece.pieceId).classList.add("king");
     kings["red"].push(selectedPiece.pieceId);
   }
   if (turn === false && selectedPiece.pieceId >= 12 && modifiedIndex <= 7) {
@@ -525,7 +685,7 @@ const changeData = (indexOfBoardPiece, modifiedIndex, removePiece) => {
   resetSelectedPieceProperties();
   removeCellonclick();
   removeEventListeners();
-}
+};
 
 // Removes the 'onClick' event listeners for pieces
 const removeEventListeners = () => {
@@ -547,7 +707,7 @@ const removeEventListeners = () => {
     }
   }
   checkForWin();
-}
+};
 
 // Checks for a win
 const checkForWin = () => {
@@ -560,14 +720,14 @@ const checkForWin = () => {
     }
   } else if (redScore === 0) {
     divider.style.display = "none";
-    for (let i = 0; i < blackTurntext.length; i++) {            
+    for (let i = 0; i < blackTurntext.length; i++) {
       blackTurntext[i].style.color = "var(--off-white)";
       redTurnText[i].style.display = "none";
       blackTurntext[i].textContent = "BLACK WINS!";
     }
   }
   changePlayer();
-}
+};
 
 // Switches players turn; turn : true = red
 const changePlayer = () => {
@@ -585,6 +745,6 @@ const changePlayer = () => {
     }
   }
   if (isLocal) givePiecesEventListeners();
-  else submitMove();  // Submit move to server; Event listeners to switch sides are not added
-}
+  else submitMove(); // Submit move to server; Event listeners to switch sides are not added
+};
 givePiecesEventListeners();
