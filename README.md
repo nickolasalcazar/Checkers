@@ -1,12 +1,13 @@
-
 # Online Checkers
 
-Express.js and Websockets are used to build a browser-based, online-multiplayer Checkers game that works on any browsing device. The app implements a stateful, server-authoritative model. The design of the app aims to be simple, stateful.
+A browser-based, online-multiplayer Checkers game made using Express.js and [WebSockets](https://www.npmjs.com/package/websocket). The app implements a stateful, server-authoritative model, where the state of a game is stored in the server. The design of the app aims to be simple and stateful.
 
-
+Play the game **[here](https://play-checkers-online.herokuapp.com/)** ([https://play-checkers-online.herokuapp.com/]).
 
 ## Running in a Local Environment
 
-Clone the project's git repository from GitHub. Open the project's directory with a code editor such as Visual Studio Code.
+Use `git clone` to download the repository.
 
-Navigate to the file `server.js`. On MacOS, navigate to the "Run" tab in the taskbar and select "Start Debugging". The Express.js app should now be running. 
+Install NPM packages with `npm i`.
+
+Run the app with `npm start`.
